@@ -55,6 +55,23 @@ class RepoResultsViewController: UIViewController {
                 print(error)
         })
     }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(true)
+
+        tableView.reloadData()
+    }
+
+    // MARK: Navigation
+
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if (segue.identifier == "SettingsViewController") {
+
+            let vc = segue.destination as! SettingsViewController
+
+            vc.searchSettings = self.searchSettings
+        }
+    }
 }
 
 extension RepoResultsViewController: UITableViewDataSource {
