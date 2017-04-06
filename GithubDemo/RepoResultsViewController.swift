@@ -12,10 +12,12 @@ import MBProgressHUD
 // Main ViewController
 class RepoResultsViewController: UIViewController {
 
+    @IBOutlet weak var tableView: UITableView!
+    
     var searchBar: UISearchBar!
     var searchSettings = GithubRepoSearchSettings()
 
-    var repos: [GithubRepo]!
+    var repos = [GithubRepo]()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -38,17 +40,36 @@ class RepoResultsViewController: UIViewController {
         MBProgressHUD.showAdded(to: self.view, animated: true)
 
         // Perform request to GitHub API to get the list of repositories
-        GithubRepo.fetchRepos(searchSettings, successCallback: { (newRepos) -> Void in
+        GithubRepo.fetchRepos(searchSettings, successCallback: {[weak weakSelf = self] (newRepos) -> Void in
 
             // Print the returned repositories to the output window
             for repo in newRepos {
                 print(repo)
-            }   
+                weakSelf?.repos.append(repo)
+            }
+
+            weakSelf?.tableView.reloadData()
 
             MBProgressHUD.hide(for: self.view, animated: true)
             }, error: { (error) -> Void in
                 print(error)
         })
+    }
+}
+
+extension RepoResultsViewController: UITableViewDataSource {
+
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return repos.count
+    }
+
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+
+        let tableCell = tableView.dequeueReusableCell(withIdentifier: "GitRepoInfoCell") as! GitRepoInfoCell
+
+        tableCell.gitRepoInfo = repos[indexPath.row]
+
+        return tableCell
     }
 }
 

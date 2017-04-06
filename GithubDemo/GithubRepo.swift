@@ -22,6 +22,10 @@ class GithubRepo: CustomStringConvertible {
     var stars: Int?
     var forks: Int?
     var repoDescription: String?
+
+    var avatarImageURL: URL {
+        return URL(string: ownerAvatarURL!)!
+    }
   
     // Initializes a GitHubRepo from a JSON dictionary
     init(jsonResult: NSDictionary) {
